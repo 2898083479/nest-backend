@@ -1,9 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseInterceptors, Inject } from '@nestjs/common';
 import { UserService } from './service/user.service';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 
 @Controller('user')
+@UseInterceptors(JwtInterceptor)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  
+  @Inject()
+  private userService = new UserService();
 
   @Get()
   findAll(): string {
