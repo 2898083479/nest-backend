@@ -6,8 +6,8 @@ import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 @UseInterceptors(JwtInterceptor)
 export class UserController {
   
-  @Inject()
-  private userService = new UserService();
+  @Inject(UserService)
+  private readonly userService: UserService;
 
   @Get()
   findAll(): string {

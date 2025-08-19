@@ -6,9 +6,15 @@ import { NestModule } from '@nestjs/common';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
+import { randomBytes } from 'crypto';
 
 @Module({
   imports: [
+    JwtModule.register({
+      secret: randomBytes(64).toString('hex'), //密钥
+      signOptions: { expiresIn: '1h' }, //1小时后过期
+    }),
     CatModule,
     DogModule,
     UserModule,

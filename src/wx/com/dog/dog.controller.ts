@@ -13,7 +13,7 @@ import { DogDto } from './domain/dog.dto';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 
 @Controller('dogs')
-@UseInterceptors(JwtInterceptor)
+// @UseInterceptors(JwtInterceptor)
 export class DogController {
   @Inject(DogService)
   private readonly dogService: DogService;
