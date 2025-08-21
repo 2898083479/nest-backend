@@ -3,8 +3,8 @@ import { JwtService } from "@nestjs/jwt";
 
 //token的组成体
 export interface UserPayload {
-    userId: number;
     email: string;
+    password: string;
 }
 
 @Injectable()

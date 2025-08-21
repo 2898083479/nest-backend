@@ -20,7 +20,8 @@
   },
   "engines": {
     "npm": ">=10.0.0",
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "bun": ">=1.1.38"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

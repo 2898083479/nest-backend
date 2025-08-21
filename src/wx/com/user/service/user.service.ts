@@ -1,33 +1,36 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../domain/user';
+import { UserModel } from '@/schema/user/types';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '@/schema/user/model';
+import { ObjectId } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  // constructor(
-  //     @InjectRepository(User)
-  //     private userRepository: Repository<User>
-  // ) {}
-  // async findAll(): Promise<User[]> {
-  //     return this.userRepository.find();
-  // }
-  // async findOne(id: number): Promise<User> {
-  //     return this.userRepository.findOne(id ? { where: { id } } : undefined);
-  // }
-  // async create(user: User): Promise<User> {
-  //     return this.userRepository.save(user);
-  // }
-  // createUsers = async (users: User[]) => {
-  //     const queryRunner = this.dataSource.createQueryRunner();
-  //     await queryRunner.connect();
-  //     await queryRunner.startTransaction();
-  //     try {
-  //         await queryRunner.manager.save(User, users); // 保存用户
-  //         await queryRunner.commitTransaction(); // 提交事务
-  //     } catch (error) {
-  //         await queryRunner.rollbackTransaction(); // 回滚事务
-  //     } finally {
-  //         await queryRunner.release(); // 释放查询执行器
-  //     }
-  // }
+  constructor(
+    @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>
+  ) { }
+
+  async signup(user: User): Promise<UserModel> {
+    const result = await this.userModel.create(user);
+    if (!result) {
+      return null;
+    }
+    return result;
+  }
+
+  async findOneById(id: string): Promise<UserModel> {
+    const result = await this.userModel.findOne({"_id": id});
+    if (!result) {
+      return null;
+    }
+    return result;
+  }
+
+  async findUserByEmail(email: string): Promise<UserModel> {
+    const user = await this.userModel.findOne({ email: email });
+    if (!user) return null;
+    return user;
+  }
+
 }

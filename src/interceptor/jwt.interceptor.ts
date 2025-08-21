@@ -24,7 +24,7 @@ export class JwtInterceptor implements NestInterceptor {
             throw new UnauthorizedException('缺少token');
         }
         // 解析Bearer token 拿到 token
-        const token = authHeader.split('')[1]; // Bearer token
+        const token = authHeader.split(' ')[1]; // Bearer token
 
         try {
             const decoded = this.jwtService.verify(token);

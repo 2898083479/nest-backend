@@ -7,7 +7,6 @@ import { CatModel } from 'src/schema/cat/types';
 
 @Injectable()
 export class CatService<T> {
-  response = new Response();
 
   constructor(
     @InjectModel(CatModel.name) private readonly catModel: Model<CatModel>,

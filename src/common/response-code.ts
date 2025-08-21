@@ -1,3 +1,5 @@
+import { Response } from ".";
+
 export const EXPAY_CATEGORY = '00';
 
 export enum ResponseCode {
@@ -45,3 +47,22 @@ export const getResponseMessage = (code: ResponseCode | string) => {
 export const getNativeResponse = (status: number) => {
   return NATIVE_RESPONSE[status] ?? ResponseCode.SYSTEM_ERROR;
 };
+
+
+
+export const handleSuccess = (message?: string, data?: any) => {
+  return new Response(
+    "0000",
+    ResponseCode.OPERATING_SUCCESSFULLY,
+    message ? message : getResponseMessage(ResponseCode.OPERATING_SUCCESSFULLY),
+    data ? data : null
+  )
+}
+
+export const handleFailed = (message?: string) => {
+  return new Response(
+    "0001",
+    ResponseCode.OPERATING_FAILED,
+    message ? message : getResponseMessage(ResponseCode.OPERATING_FAILED)
+  )
+}
