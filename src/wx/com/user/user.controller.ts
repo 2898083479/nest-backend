@@ -5,7 +5,6 @@ import {
   UseInterceptors,
   Inject,
   Body,
-  Param,
   Query
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
@@ -46,5 +45,15 @@ export class UserController {
       return handleFailed();
     }
     return handleSuccess(undefined, user);
+  }
+
+  @Get("all")
+  @UseInterceptors(JwtInterceptor)
+  async findAll() {
+    const userList = await this.userService.findAll();
+    if (!userList) {
+      return handleFailed();
+    }
+    return handleSuccess(undefined, userList);
   }
 }

@@ -4,10 +4,8 @@ import { DogModule } from './wx/com/dog/dog.module';
 import { UserModule } from './wx/com/user/user.module';
 import { NestModule } from '@nestjs/common';
 import { LoggerMiddleware } from './middleware/logger.middleware';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
-import { randomBytes } from 'crypto';
 import { AuthModule } from './jwt/auth.module';
 
 @Module({
