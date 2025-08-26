@@ -6,11 +6,14 @@ import {
   HttpStatus,
   Inject,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DogService } from './service/dog.service';
 import { DogDto } from './domain/dog.dto';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 
 @Controller('dogs')
+// @UseInterceptors(JwtInterceptor)
 export class DogController {
   @Inject(DogService)
   private readonly dogService: DogService;
