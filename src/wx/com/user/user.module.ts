@@ -5,9 +5,11 @@ import { AuthModule } from 'src/jwt/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModel, UserSchema } from '@/schema/user/types';
 import { RedisModule } from '@/redis/redis.module';
+import { EmailModule } from '@/email/email.module';
 
 @Module({
   imports: [
+    EmailModule,
     AuthModule,
     RedisModule,
     MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }])

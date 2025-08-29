@@ -4,12 +4,14 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '@/schema/user/model';
 import { RedisService } from '@/redis/redis.service';
+import { EmailService } from '@/email/email.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
-    private readonly redisService: RedisService
+    private readonly redisService: RedisService,
+    private readonly emailService: EmailService,
   ) { }
 
   async signup(user: User): Promise<UserModel> {
@@ -17,6 +19,7 @@ export class UserService {
     if (!result) {
       return null;
     }
+    await this.emailService.sendWelcomeEmail(user.email, user.name);
     return result;
   }
 
