@@ -52,7 +52,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       for (const consumer of this.consumers.values()) {
         await consumer.disconnect();
       }
-      
+
       await this.producer.disconnect();
       await this.admin.disconnect();
       this.logger.log('Kafka connections closed successfully');
@@ -61,20 +61,32 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  private async ensureTopicExists(topic: string): Promise<void> {
+    const topics = await this.admin.listTopics();
+    if (!topics.includes(topic)) {
+      this.logger.log(`Topic "${topic}" does not exist. Creating...`);
+      await this.admin.createTopics({
+        topics: [{ topic, numPartitions: 1, replicationFactor: 1 }],
+      });
+      this.logger.log(`Topic "${topic}" created successfully`);
+    }
+  }
+
   // 发送消息到指定主题
   async send(topic: string, messages: KafkaMessage | KafkaMessage[]): Promise<void> {
-    try {
-      const messageArray = Array.isArray(messages) ? messages : [messages];
-      
-      const records: ProducerRecord = {
-        topic,
-        messages: messageArray.map(msg => ({
-          key: msg.key,
-          value: typeof msg.value === 'string' ? msg.value : JSON.stringify(msg.value),
-          headers: msg.headers,
-        })),
-      };
+    await this.ensureTopicExists(topic); // 先确保 topic 存在
 
+    const messageArray = Array.isArray(messages) ? messages : [messages];
+    const records: ProducerRecord = {
+      topic,
+      messages: messageArray.map(msg => ({
+        key: msg.key,
+        value: typeof msg.value === 'string' ? msg.value : JSON.stringify(msg.value),
+        headers: msg.headers,
+      })),
+    };
+
+    try {
       await this.producer.send(records);
       this.logger.debug(`Message sent to topic: ${topic}`);
     } catch (error) {
@@ -84,19 +96,21 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   }
 
   // 创建消费者
-  async createConsumer(groupId: string, topic: string, options: ConsumerOptions = { 
-    groupId, 
-    fromBeginning: false, 
-    autoCommit: true 
+  async createConsumer(groupId: string, topic: string, options: ConsumerOptions = {
+    groupId,
+    fromBeginning: false,
+    autoCommit: true
   }): Promise<void> {
     try {
+      // 创建消费者
       const consumer = this.kafka.consumer({
         groupId: options.groupId,
       });
-
+      // 消费者连接到kafka服务器
       await consumer.connect();
+      // 消费者订阅主题
       await consumer.subscribe({ topic, fromBeginning: options.fromBeginning });
-
+      // 消费者设置为已创建
       this.consumers.set(`${groupId}-${topic}`, consumer);
       this.logger.log(`Consumer created for topic: ${topic}, group: ${groupId}`);
     } catch (error) {
@@ -107,8 +121,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
   // 消费消息
   async consume(
-    groupId: string, 
-    topic: string, 
+    groupId: string,
+    topic: string,
     callback: (message: any) => Promise<void>
   ): Promise<void> {
     const consumerKey = `${groupId}-${topic}`;
@@ -124,7 +138,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         try {
           const value = message.value?.toString();
           const parsedValue = value ? this.tryParseJson(value) : value;
-          
+
           await callback({
             topic,
             partition,

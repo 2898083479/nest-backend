@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './jwt/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
+import { EmailModule } from './email/email.module';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
@@ -18,30 +19,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       isGlobal: true,
       envFilePath: '.env'
     }),
-    MailerModule.forRoot({
-      transport: {
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: "ethanwang627@gmail.com",
-          pass: "yefj qkeo pmdn qsqj",
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      },
-      defaults: {
-        from: '"No Reply" <noreply@example.com>',
-      },
-      template: {
-        dir: join(process.cwd(), 'src/templates/email'),
-        adapter: new HandlebarsAdapter(),
-        options: {
-          strict: true,
-        },
-      },
-    }),
+    EmailModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY, //密钥
       signOptions: { expiresIn: process.env.JWT_SECRET_KEY_EXPIRESIN }, //1小时后过期

@@ -3,9 +3,11 @@ import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailService } from './email.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { KafkaModule } from '@/kafka/kafka.module';
 
 @Module({
     imports: [
+        KafkaModule,
         MailerModule.forRoot({
             transport: {
                 host: 'smtp.gmail.com',
@@ -29,9 +31,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
                     strict: true,
                 },
             },
-        })
+        }),
     ],
     providers: [EmailService],
-    exports: [EmailModule, EmailService]
+    exports: [EmailService]
 })
 export class EmailModule { };
