@@ -1,0 +1,21 @@
+name: depoly-nest
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+  
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: action/checkout@v2
+      - name: install nodejs
+        uses: actions/setup-node@v2.5.1
+        with:
+            node-version: "14.X"
+        
+
+
+    
